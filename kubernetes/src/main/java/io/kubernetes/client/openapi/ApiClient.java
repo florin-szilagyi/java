@@ -59,6 +59,8 @@ import io.kubernetes.client.openapi.auth.ApiKeyAuth;
  */
 public class ApiClient {
 
+    private static final String TRUST_STORE_TYPE_SYSTEM_PROPERTY = "javax.net.ssl.trustStoreType";
+
     private String basePath = "http://localhost";
     protected List<ServerConfiguration> servers = new ArrayList<ServerConfiguration>(Arrays.asList(
     new ServerConfiguration(
@@ -1516,7 +1518,8 @@ public class ApiClient {
 
     private KeyStore newEmptyKeyStore(char[] password) throws GeneralSecurityException {
         try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            final String trustStoreType = System.getProperty(TRUST_STORE_TYPE_SYSTEM_PROPERTY, KeyStore.getDefaultType());
+            KeyStore keyStore = KeyStore.getInstance(trustStoreType);
             keyStore.load(null, password);
             return keyStore;
         } catch (IOException e) {
